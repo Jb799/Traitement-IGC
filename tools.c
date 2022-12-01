@@ -7,38 +7,40 @@
 // extraction d'un IGCRecord depuis une chaine
 IGCRecord extractIGC(char chaineEnregistrement[]){
     IGCRecord locRecord;
-    // à vous de compléter les déclaration
+    unsigned lat_deg, lat_min, lon_deg, lon_min;
+    char lat_NS, lon_EW;
 
     if ((strlen(chaineEnregistrement) < 35) || (chaineEnregistrement[0] != 'B'))
         return NULLRecord;
 
-    // On vous donne le format ... à vous de compléter les ...
-    nbLu = sscanf(chaineEnregistrement, "B %6c %2d %5d %1c %3d %5d %1c A %5d %5d"
-            ,&(locRecord.time), ..., ..., ..., ..., ..., &lon_EW
-            , &(locRecord.altitudeBaro), ...);
+    // Extraction des données IGC :
+    unsigned nbLu = sscanf(chaineEnregistrement, "B %6c %2d %5d %1c %3d %5d %1c A %5d %5d"
+            ,&(locRecord.time), &lat_deg, &lat_min, &lat_NS, &lon_deg, &lon_min, &lon_EW
+            , &(locRecord.altitudeBaro), &(locRecord.altitudeGPS));
 
     if (nbLu < 7) // le point n'est pas bon.
         locRecord = NULLRecord;
     else {
         if (nbLu < 9){
-        // les altitudes ne sont pas valides
-        // par convention on y stock -1
-        locRecord.altitudeBaro = -1;
-        locRecord.altitudeGPS = -1;
+            // les altitudes ne sont pas valides
+            // par convention on y stock -1
+            locRecord.altitudeBaro = -1;
+            locRecord.altitudeGPS = -1;
         }
         // mise en flotant des coordonnées
         // la partie entière est en degrés et la partie décimale en milièmes de minutes d'arc
-        locRecord.latitude = (float)...;
+        locRecord.latitude = (float)lat_deg - (lat_min / 60);
         if (lat_NS == 'S' || lat_NS == 's') locRecord.latitude *= -1.0; // négatif au sud
 
-        locRecord.longitude = ...;
-        if ...; // négatif à l'ouest
+        locRecord.longitude = (float)lon_deg - (lon_min / 60);
+        if (lon_EW == 'O' || lon_EW == 'o') locRecord.longitude *= -1.0; // négatif à l'ouest
     }
     return locRecord;
 }
 
 // calcul d'écart entre deux Records
 IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
+    /*
     const float earthRadius = 6400.0;   // rayon terrestre pour le calcul des distances
     // ...
     
@@ -68,6 +70,8 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
         ...
 
     return deltaRec;
+
+    */
 }
 IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
     // à coder
