@@ -20,22 +20,27 @@ void printRecord(IGCRecord);
 void printDeltaRecord(IGCDeltaRecord);
 
 int main (int argc, char** argv){
-    IGCDeltaRecord deltaRecords_tab[5]; //à utiliser pour stocker les données qui seront moyennées par la fonction cumuleRecords.
+    IGCDeltaRecord deltaRecords_tab[5]; // à utiliser pour stocker les données qui seront moyennées par la fonction cumuleRecords.
     IGCDeltaRecord deltaRecord_temp;    // variable tampon pour stockage temporel
     // ******************************************
     //placez ici vos déclaration de variables supplémentaires
 
 
-
-
-
     // /!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_
     // mise à jour de tableauEnreg et nbLignesLues
-    lireTableauEnreg();
+    
+    
+    // lireTableauEnreg();
 
 
 
     // ******************************************
+    // -* DEBUG *-
+        printRecord(extractIGC("B1341234531771N00615152EA0119001285"));
+        return 0;
+    // -* END DEBUG *-
+
+
     // Pour l'instant le code ne fait que recopier le fichier d'entrée vers la sortie.
     // ces deux lignes sont un exemple à remplacer par votre code
     for (int i = 0; i < nbLignesLues ; i++)
