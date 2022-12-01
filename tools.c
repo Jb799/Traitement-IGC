@@ -40,10 +40,9 @@ IGCRecord extractIGC(char chaineEnregistrement[]){
 
 // calcul d'écart entre deux Records
 IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
-    /*
-    const float earthRadius = 6400.0;   // rayon terrestre pour le calcul des distances
+const float earthRadius = 6400.0;   // rayon terrestre pour le calcul des distances
     // ...
-    
+
     // horodatage de référence = départ
     for (int i = 0; i < 6; i++)
         deltaRec.time[i] = depart.time[i];
@@ -51,27 +50,37 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
     // durée
     sscanf(depart.time,"%2d %2d %2d", &Hd, &md, &sd);
     //... idem avec l'arrivée
-    deltaRec.duree = 3600.0*(Ha-Hd) + 60.0*(ma-md) + (sa-sd);
+    deltaRec.duree = 3600.0(Ha-Hd) + 60.0(ma-md) + (sa-sd);
 
     //distance horizontale
-    meanLat = 0.5*(arrivee.latitude + depart.latitude);     //latitude moyenne du lieu
+    meanLat = 0.5(arrivee.latitude + depart.latitude);     //latitude moyenne du lieu
+    diffLat = arrivee.latitude - depart.latitude;
+    ecartLong = arrivee.longitude - depart.longitude;
     // à  vous de jouée :
     // indication la distance horizotale est donnée par :
-    // distH = earthRadius * sqrt(pow(tan(différence_latitude),2)+pow(cos(latitude moyenne)*tan(écart de longitude),2));
+    distH = earthRadius sqrt(pow(tan(diffLat),2)+pow(cos(meanLat)*tan(ecartLong),2));
 
     //distance verticale
     // on vérifie si les altitudes sont valides (i.e. positives).
+    if locRecord.altitudeBaro > 0 {
+
+    }
+    else locRecord.altitudeGPS > 0 {
+        locRecord.altitudeBaro = -1;
+    }
+    else{
+        locRecord.altitudeBaro = -1;
+        locRecord.altitudeGPS = -1;
+    }
     // On prend en priorité l'altitude Barométrique, sinon celle par le GPS, à défaut on met une valeur négative pour signifier que la distance verticale est invalide.
-    
+
     //vitesse horizontale
-    ...
+        VitH = distH / deltaRec.duree;
 
     //vitesse verticale
-        ...
+        VitV = distV / deltaRec.duree;
 
     return deltaRec;
-
-    */
 }
 IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
     // à coder
