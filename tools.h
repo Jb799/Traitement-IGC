@@ -31,8 +31,6 @@ typedef struct _deltaRecord {
 
 const IGCDeltaRecord NULLDeltaRecord; // l'enregistrement NULL. idem NULLRecord.
 
-
-// Fonctions à coder
 // Fonction qui revoie les informations d'un point à partir du tableau de char contenant un enregistrement. 
 // Si l'enregistrement n'est pas de type B, retourne NULLRecord
 IGCRecord extractIGC(char chaineEnregistrement[]);
