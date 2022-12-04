@@ -85,26 +85,27 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
     return deltaRec;
 }
 IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
+    IGCDeltaRecord cumuleDeltaRec;
 
     // time
-    sscanf(deltaRec.time[0],"%2d %2d %2d", &Hd, &md, &sd);
+    cumuleDeltaRec.time = deltaRec[0].time;
 
     //durée totale
     for (int i = 0; i < sizeof(deltaRec); i++)
-        deltaRec.duree += deltaRec.duree[i];
+        cumuleDeltaRec.duree += deltaRec[i].duree;
 
     //distance totale
     for (int i = 0; i < sizeof(deltaRec); i++)
-        deltaRec.distH.tot += deltaRec.distH[i];
-        deltaRec.distV.tot += deltaRec.distV[i];
-        deltaRec.vitesseH.tot += deltaRec.vitesseH[i];
-        deltaRec.vitesseV.tot += deltaRec.vitesseV[i];
+        cumuleDeltaRec.distH += deltaRec[i].distH;
+        cumuleDeltaRec.distV += deltaRec[i].distV;
+        cumuleDeltaRec.vitesseH += deltaRec[i].vitesseH;
+        cumuleDeltaRec.vitesseV += deltaRec[i].vitesseV;
 
     //vitesse moyenne
-    deltaRec.vitesseH.tot = deltaRec.vitesseH.tot / deltaRec.duree;
-    deltaRec.vitesseV.tot = deltaRec.vitesseV.tot / deltaRec.duree;
+    cumuleDeltaRec.vitesseH = cumuleDeltaRec.vitesseH / cumuleDeltaRec.duree;
+    cumuleDeltaRec.vitesseV = cumuleDeltaRec.vitesseV / cumuleDeltaRec.duree;
 
-    return NULLDeltaRecord;
+    return cumuleDeltaRec;
 }
 void delta2csv(IGCDeltaRecord deltaRec, char csvString[]){
 
