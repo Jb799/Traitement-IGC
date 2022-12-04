@@ -57,11 +57,11 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
     //distance horizontale
     float meanLat = 0.5 * (arrivee.latitude + depart.latitude);     //latitude moyenne du lieu
     float diffLat = arrivee.latitude - depart.latitude;
-    float ecartLong = abs(arrivee.longitude - depart.longitude);
+    float ecartLong = arrivee.longitude - depart.longitude;
 
     // à  vous de jouée :
     // indication la distance horizotale est donnée par :
-    deltaRec.distH = earthRadius * sqrt(pow(tan(diffLat), 2) + pow(cos(meanLat) * tan(ecartLong), 2));
+    deltaRec.distH =abs( earthRadius * sqrt(pow(tan(diffLat), 2) + pow(cos(meanLat) * tan(ecartLong), 2)));
 
     //distance verticale
     // on vérifie si les altitudes sont valides (i.e. positives).
@@ -70,10 +70,10 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
         if (arrivee.altitudeGPS < 0 || depart.altitudeGPS < 0) {
             deltaRec.distV = -1;
         }else{
-            deltaRec.distV = abs(arrivee.altitudeGPS - depart.altitudeGPS);
+            deltaRec.distV = arrivee.altitudeGPS - depart.altitudeGPS;
         }
     }else{
-        deltaRec.distV = abs(arrivee.altitudeBaro - depart.altitudeBaro);
+        deltaRec.distV = arrivee.altitudeBaro - depart.altitudeBaro;
     }
 
     //vitesse horizontale
@@ -85,7 +85,25 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
     return deltaRec;
 }
 IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
-    // à coder
+
+    // time
+    sscanf(deltaRec.time[0],"%2d %2d %2d", &Hd, &md, &sd);
+
+    //durée totale
+    for (int i = 0; i < sizeof(deltaRec); i++)
+        deltaRec.duree += deltaRec.duree[i];
+
+    //distance totale
+    for (int i = 0; i < sizeof(deltaRec); i++)
+        deltaRec.distH.tot += deltaRec.distH[i];
+        deltaRec.distV.tot += deltaRec.distV[i];
+        deltaRec.vitesseH.tot += deltaRec.vitesseH[i];
+        deltaRec.vitesseV.tot += deltaRec.vitesseV[i];
+
+    //vitesse moyenne
+    deltaRec.vitesseH.tot = deltaRec.vitesseH.tot / deltaRec.duree;
+    deltaRec.vitesseV.tot = deltaRec.vitesseV.tot / deltaRec.duree;
+
     return NULLDeltaRecord;
 }
 void delta2csv(IGCDeltaRecord deltaRec, char csvString[]){
