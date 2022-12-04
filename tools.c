@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <math.h>
 #include "tools.h"
 
@@ -61,11 +62,14 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
 
     // à  vous de jouée :
     // indication la distance horizotale est donnée par :
-    deltaRec.distH =abs( earthRadius * sqrt(pow(tan(diffLat), 2) + pow(cos(meanLat) * tan(ecartLong), 2)));
+    deltaRec.distH = abs( earthRadius * sqrt(pow(tan(diffLat), 2) + pow(cos(meanLat) * tan(ecartLong), 2)));
 
     //distance verticale
     // on vérifie si les altitudes sont valides (i.e. positives).
     // On prend en priorité l'altitude Barométrique, sinon celle par le GPS, à défaut on met une valeur négative pour signifier que la distance verticale est invalide.
+    
+    // PRENDRE EN COMPTE (A) ALTITUDES VALIDES.
+
     if (arrivee.altitudeBaro < 0 || depart.altitudeBaro < 0) {
         if (arrivee.altitudeGPS < 0 || depart.altitudeGPS < 0) {
             deltaRec.distV = -1;
@@ -92,15 +96,16 @@ IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
     cumuleDeltaRec.time = deltaRec[0].time;
 
     //durée totale
-    for (int i = 0; i < sizeof(deltaRec); i++)
+    for (unsigned i = 0; i < sizeof(deltaRec); i++)
         cumuleDeltaRec.duree += deltaRec[i].duree;
 
     //distance totale
-    for (int i = 0; i < sizeof(deltaRec); i++)
+    for (unsigned i = 0; i < sizeof(deltaRec); i++){
         cumuleDeltaRec.distH += deltaRec[i].distH;
         cumuleDeltaRec.distV += deltaRec[i].distV;
         cumuleDeltaRec.vitesseH += deltaRec[i].vitesseH;
         cumuleDeltaRec.vitesseV += deltaRec[i].vitesseV;
+    }
 
     //vitesse moyenne
     cumuleDeltaRec.vitesseH = cumuleDeltaRec.vitesseH / cumuleDeltaRec.duree;
