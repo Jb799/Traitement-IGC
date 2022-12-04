@@ -28,17 +28,10 @@ int main (int argc, char** argv){
 
     // /!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_
     // mise à jour de tableauEnreg et nbLignesLues
-    
-    
-    // lireTableauEnreg();
-
-
+    lireTableauEnreg();
 
     // ******************************************
-    // -* DEBUG *-
-        printRecord(extractIGC("B1341234531771N00615152EA0119001285"));
-        return 0;
-    // -* END DEBUG *-
+    
 
 
     // Pour l'instant le code ne fait que recopier le fichier d'entrée vers la sortie.
