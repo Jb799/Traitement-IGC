@@ -84,6 +84,7 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
 
     return deltaRec;
 }
+
 IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
     IGCDeltaRecord cumuleDeltaRec;
 
@@ -107,7 +108,32 @@ IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
 
     return cumuleDeltaRec;
 }
-void delta2csv(IGCDeltaRecord deltaRec, char csvString[]){
 
-    // à coder
+void delta2csv(IGCDeltaRecord deltaRec, char csvString[]){
+    char converter[10];
+
+    csvString = strcat(deltaRec.time, ';');
+
+    sprintf(converter, "%d", deltaRec.duree);
+    csvString = strcat(csvString, converter);
+
+    csvString = strcat(csvString, ';');
+
+    gcvt(deltaRec.distH, 10, converter);
+    csvString = strcat(csvString, converter);
+
+    csvString = strcat(csvString, ';');
+
+    sprintf(converter, "%d", deltaRec.distV);
+    csvString = strcat(csvString, converter);
+
+    csvString = strcat(csvString, ';');
+
+    gcvt(deltaRec.vitesseH, 10, converter);
+    csvString = strcat(csvString, converter);
+
+    csvString = strcat(csvString, ';');
+
+    gcvt(deltaRec.vitesseV, 10, converter);
+    csvString = strcat(csvString, converter);
 }
