@@ -24,7 +24,7 @@ int main (int argc, char** argv){
     IGCDeltaRecord deltaRecord_temp;    // variable tampon pour stockage temporel
     // ******************************************
     //placez ici vos déclaration de variables supplémentaires
-
+    IGCRecord record_temp;    // ( variable tampon pour stockage temporel )
 
     // /!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_
     // mise à jour de tableauEnreg et nbLignesLues
@@ -36,12 +36,15 @@ int main (int argc, char** argv){
 
     // Pour l'instant le code ne fait que recopier le fichier d'entrée vers la sortie.
     // ces deux lignes sont un exemple à remplacer par votre code
-    for (int i = 0; i < nbLignesLues ; i++)
-        fprintf(stdout, "%s\n", tableauEnreg[i]);
+    for (int i = 0; i < nbLignesLues ; i++){
+        record_temp = extractIGC(tableauEnreg[i]);
+        printRecord(record_temp);
+    }
+
     /* votre code doit :
     parcourir toutes les nbLignesLues lignes de tableauEnreg.
     Au long de ce parcours, il faudra :
-    - transformer les chaines de caractères en IGCRecords grâce à la fonction adéquat de tools.h
+    X - transformer les chaines de caractères en IGCRecords grâce à la fonction adéquat de tools.h
     - créer des IGCDeltaRecords pour chaque couple d'IGCRecord consécutifs. Fonction calculerEcart(...). ATTENTION, tous les enregistrements ne donnent pas une position.
     - regrouper les IGCDeltaRecords par paquets de 5 et en calculer un représentant moyen grâce à cumuleRecords(...).
     - écrire ce représentant moyen dans le fichier de sortie après l'avoir transformé en chaine de caractère csv (fonction delta2csv() et à l'aide de l'instruction suivante :)

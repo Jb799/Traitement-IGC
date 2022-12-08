@@ -40,7 +40,7 @@ IGCRecord extractIGC(char chaineEnregistrement[]);
 IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee);
 
 // Fonction qui intègre plusieurs échantillons en un (voir énoncé)
-IGCDeltaRecord cumuleRecords(IGCDeltaRecord []);
+IGCDeltaRecord cumuleRecords(IGCDeltaRecord [], size_t deltaRecSize);
 
 // Fonction qui crée une chaine au format csv à partir d'un IGCDeltaRecord et la stock dans le tableau passé en paramètre. **Attention** : pour utiliser cette fonction vous penserez à passer un tableau assez grand.
 void delta2csv(IGCDeltaRecord, char []);

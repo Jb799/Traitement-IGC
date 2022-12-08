@@ -7,7 +7,7 @@
 
 // extraction d'un IGCRecord depuis une chaine
 IGCRecord extractIGC(char chaineEnregistrement[]){
-    IGCRecord locRecord;
+    IGCRecord locRecord = {};
     unsigned lat_deg, lat_min, lon_deg, lon_min;
     char lat_NS, lon_EW;
 
@@ -36,6 +36,7 @@ IGCRecord extractIGC(char chaineEnregistrement[]){
         locRecord.longitude = (float)lon_deg - (lon_min / 60);
         if (lon_EW == 'O' || lon_EW == 'o') locRecord.longitude *= -1.0; // négatif à l'ouest
     }
+
     return locRecord;
 }
 
@@ -67,8 +68,6 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
     //distance verticale
     // on vérifie si les altitudes sont valides (i.e. positives).
     // On prend en priorité l'altitude Barométrique, sinon celle par le GPS, à défaut on met une valeur négative pour signifier que la distance verticale est invalide.
-    
-    // PRENDRE EN COMPTE (A) ALTITUDES VALIDES.
 
     if (arrivee.altitudeBaro < 0 || depart.altitudeBaro < 0) {
         if (arrivee.altitudeGPS < 0 || depart.altitudeGPS < 0) {
@@ -89,18 +88,21 @@ IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
     return deltaRec;
 }
 
-IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
+IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[], size_t deltaRecSize){
     IGCDeltaRecord cumuleDeltaRec;
 
+    if(deltaRecSize <= 0)
+        return NULLDeltaRecord;
+
     // time
-    cumuleDeltaRec.time = deltaRec[0].time;
+    strncpy(cumuleDeltaRec.time, deltaRec[0].time, 6);
 
     //durée totale
-    for (unsigned i = 0; i < sizeof(deltaRec); i++)
+    for (unsigned i = 0; i < deltaRecSize; i++)
         cumuleDeltaRec.duree += deltaRec[i].duree;
 
     //distance totale
-    for (unsigned i = 0; i < sizeof(deltaRec); i++){
+    for (unsigned i = 0; i < deltaRecSize; i++){
         cumuleDeltaRec.distH += deltaRec[i].distH;
         cumuleDeltaRec.distV += deltaRec[i].distV;
         cumuleDeltaRec.vitesseH += deltaRec[i].vitesseH;
@@ -117,28 +119,25 @@ IGCDeltaRecord cumuleRecords(IGCDeltaRecord deltaRec[]){
 void delta2csv(IGCDeltaRecord deltaRec, char csvString[]){
     char converter[10];
 
-    csvString = strcat(deltaRec.time, ';');
+    strcpy(csvString, deltaRec.time);
+    strcat(csvString, ";");
 
     sprintf(converter, "%d", deltaRec.duree);
-    csvString = strcat(csvString, converter);
-
-    csvString = strcat(csvString, ';');
+    strcat(csvString, converter);
+    strcat(csvString, ";");
 
     gcvt(deltaRec.distH, 10, converter);
-    csvString = strcat(csvString, converter);
-
-    csvString = strcat(csvString, ';');
+    strcat(csvString, converter);
+    strcat(csvString, ";");
 
     sprintf(converter, "%d", deltaRec.distV);
-    csvString = strcat(csvString, converter);
-
-    csvString = strcat(csvString, ';');
+    strcat(csvString, converter);
+    strcat(csvString, ";");
 
     gcvt(deltaRec.vitesseH, 10, converter);
-    csvString = strcat(csvString, converter);
-
-    csvString = strcat(csvString, ';');
+    strcat(csvString, converter);
+    strcat(csvString, ";");
 
     gcvt(deltaRec.vitesseV, 10, converter);
-    csvString = strcat(csvString, converter);
+    strcat(csvString, converter);
 }
