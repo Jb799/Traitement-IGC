@@ -44,7 +44,7 @@ IGCRecord extractIGC(char chaineEnregistrement[]){
 IGCDeltaRecord calculerEcart(IGCRecord depart, IGCRecord arrivee){
     const float earthRadius = 6400.0;   // rayon terrestre pour le calcul des distances
     unsigned Hd, md, sd, Ha, ma, sa;
-    IGCDeltaRecord deltaRec;
+    IGCDeltaRecord deltaRec = {};
 
     // horodatage de référence = départ
     for (int i = 0; i < 6; i++)
