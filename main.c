@@ -18,36 +18,56 @@ void libererTableauEnreg();
 // procédures d'affichage
 void printRecord(IGCRecord);
 void printDeltaRecord(IGCDeltaRecord);
-
+ 
 int main (int argc, char** argv){
     IGCDeltaRecord deltaRecords_tab[5]; // à utiliser pour stocker les données qui seront moyennées par la fonction cumuleRecords.
     IGCDeltaRecord deltaRecord_temp;    // variable tampon pour stockage temporel
     // ******************************************
     //placez ici vos déclaration de variables supplémentaires
-    IGCRecord record_temp;    // ( variable tampon pour stockage temporel )
+    IGCRecord record_tab[2];
+    IGCRecord record_temp;
+    char csvString[20];
 
     // /!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_
     // mise à jour de tableauEnreg et nbLignesLues
     lireTableauEnreg();
 
     // ******************************************
-    
-
 
     // Pour l'instant le code ne fait que recopier le fichier d'entrée vers la sortie.
     // ces deux lignes sont un exemple à remplacer par votre code
     for (int i = 0; i < nbLignesLues ; i++){
-        record_temp = extractIGC(tableauEnreg[i]);
-        printRecord(record_temp);
+        record_temp = extractIGC(tableauEnreg[i]); // Convertir la chaine en un enregistrement
+
+        //if(sizeof(record_temp) == sizeof(NULLRecord)) continue; // Si l'enregistrement n'est pas bon.
+
+        if(sizeof(record_tab[0]) <= 0){
+            record_tab[0] = record_temp;
+        }else{
+            record_tab[1] = record_temp;
+            deltaRecord_temp = calculerEcart(record_tab[0], record_tab[1]);
+            //printDeltaRecord(deltaRecord_temp);
+            
+            for (unsigned i = 0; i < sizeof(deltaRecords_tab); i++)
+            {
+                if(sizeof(deltaRecords_tab[i]) <= 0)
+                    deltaRecords_tab[i] = deltaRecord_temp;
+                else if(i >= sizeof(deltaRecords_tab) - 1){
+                    deltaRecord_temp = cumuleRecords(deltaRecords_tab, sizeof(deltaRecords_tab));
+                    delta2csv(deltaRecord_temp, csvString);
+                    fprintf(stdout, "%s\n", csvString);
+                }
+            }
+        }
     }
 
     /* votre code doit :
     parcourir toutes les nbLignesLues lignes de tableauEnreg.
     Au long de ce parcours, il faudra :
     X - transformer les chaines de caractères en IGCRecords grâce à la fonction adéquat de tools.h
-    - créer des IGCDeltaRecords pour chaque couple d'IGCRecord consécutifs. Fonction calculerEcart(...). ATTENTION, tous les enregistrements ne donnent pas une position.
-    - regrouper les IGCDeltaRecords par paquets de 5 et en calculer un représentant moyen grâce à cumuleRecords(...).
-    - écrire ce représentant moyen dans le fichier de sortie après l'avoir transformé en chaine de caractère csv (fonction delta2csv() et à l'aide de l'instruction suivante :)
+    X - créer des IGCDeltaRecords pour chaque couple d'IGCRecord consécutifs. Fonction calculerEcart(...). ATTENTION, tous les enregistrements ne donnent pas une position.
+    X - regrouper les IGCDeltaRecords par paquets de 5 et en calculer un représentant moyen grâce à cumuleRecords(...).
+    X - écrire ce représentant moyen dans le fichier de sortie après l'avoir transformé en chaine de caractère csv (fonction delta2csv() et à l'aide de l'instruction suivante :)
         fprintf(stdout, "%s\n", ma_chaine_csv);
     */
     // ******************************************
