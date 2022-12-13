@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include<string.h>
 #include "tools.h"
 
 #define nbLignesIGC 3350 // nombre maximal de lignes dans le fichier (le plus grand exemple en compte 3320)
@@ -18,14 +19,17 @@ void libererTableauEnreg();
 // procédures d'affichage
 void printRecord(IGCRecord);
 void printDeltaRecord(IGCDeltaRecord);
- 
+
+int isNullRecord(IGCRecord record);
+int isNullDeltaRecord(IGCDeltaRecord record);
+void setArrayToNullDeltaRecord(IGCDeltaRecord tab[], size_t tab_size);
+
 int main (int argc, char** argv){
-    IGCDeltaRecord deltaRecords_tab[5]; // à utiliser pour stocker les données qui seront moyennées par la fonction cumuleRecords.
+    IGCDeltaRecord deltaRecords_tab[5] = { NULLDeltaRecord, NULLDeltaRecord, NULLDeltaRecord, NULLDeltaRecord, NULLDeltaRecord }; // à utiliser pour stocker les données qui seront moyennées par la fonction cumuleRecords.
     IGCDeltaRecord deltaRecord_temp;    // variable tampon pour stockage temporel
     // ******************************************
     //placez ici vos déclaration de variables supplémentaires
-    IGCRecord record_tab[2];
-    IGCRecord record_temp;
+    IGCRecord record_temp, record_temp1 = NULLRecord, record_temp2 = NULLRecord;
     char csvString[20];
 
     // /!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_
@@ -39,39 +43,33 @@ int main (int argc, char** argv){
     for (int i = 0; i < nbLignesLues ; i++){
         record_temp = extractIGC(tableauEnreg[i]); // Convertir la chaine en un enregistrement
 
-        //if(sizeof(record_temp) == sizeof(NULLRecord)) continue; // Si l'enregistrement n'est pas bon.
+        if(isNullRecord(record_temp) == 1) continue; // Si l'enregistrement n'est pas bon.
 
-        if(sizeof(record_tab[0]) <= 0){
-            record_tab[0] = record_temp;
+        if(isNullRecord(record_temp1) == 1){
+            record_temp1 = record_temp;
         }else{
-            record_tab[1] = record_temp;
-            deltaRecord_temp = calculerEcart(record_tab[0], record_tab[1]);
+            record_temp2 = record_temp;
+
+            deltaRecord_temp = calculerEcart(record_temp1, record_temp2);
+
             //printDeltaRecord(deltaRecord_temp);
-            
-            for (unsigned i = 0; i < sizeof(deltaRecords_tab); i++)
+
+            record_temp1 = NULLRecord;
+
+            for (unsigned j = 0; j < sizeof(deltaRecords_tab); j++)
             {
-                if(sizeof(deltaRecords_tab[i]) <= 0)
-                    deltaRecords_tab[i] = deltaRecord_temp;
-                else if(i >= sizeof(deltaRecords_tab) - 1){
+                if(isNullDeltaRecord(deltaRecords_tab[j]) == 1)
+                    deltaRecords_tab[j] = deltaRecord_temp;
+                
+                if(j >= sizeof(deltaRecords_tab) - 1){
                     deltaRecord_temp = cumuleRecords(deltaRecords_tab, sizeof(deltaRecords_tab));
                     delta2csv(deltaRecord_temp, csvString);
                     fprintf(stdout, "%s\n", csvString);
+                    setArrayToNullDeltaRecord(deltaRecords_tab, 5);
                 }
             }
         }
     }
-
-    /* votre code doit :
-    parcourir toutes les nbLignesLues lignes de tableauEnreg.
-    Au long de ce parcours, il faudra :
-    X - transformer les chaines de caractères en IGCRecords grâce à la fonction adéquat de tools.h
-    X - créer des IGCDeltaRecords pour chaque couple d'IGCRecord consécutifs. Fonction calculerEcart(...). ATTENTION, tous les enregistrements ne donnent pas une position.
-    X - regrouper les IGCDeltaRecords par paquets de 5 et en calculer un représentant moyen grâce à cumuleRecords(...).
-    X - écrire ce représentant moyen dans le fichier de sortie après l'avoir transformé en chaine de caractère csv (fonction delta2csv() et à l'aide de l'instruction suivante :)
-        fprintf(stdout, "%s\n", ma_chaine_csv);
-    */
-    // ******************************************
-    
 
     // /!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_/!\_
     // libération de la mémoire allouée dans le tableau
@@ -79,8 +77,29 @@ int main (int argc, char** argv){
     return 0;
 }
 
+void setArrayToNullDeltaRecord(IGCDeltaRecord tab[], size_t tab_size){
+    for (size_t i = 0; i < tab_size - 1; i++)
+    {
+        for (size_t j = 0; j < 6; j++)
+            tab[i].time[j] = NULLDeltaRecord.time[j];
 
+        tab[i].duree = NULLDeltaRecord.duree;
+        tab[i].distH = NULLDeltaRecord.distH;
+        tab[i].distV = NULLDeltaRecord.distV;
+        tab[i].vitesseH = NULLDeltaRecord.vitesseH;
+        tab[i].vitesseV = NULLDeltaRecord.vitesseV;
+    }
+    
+}
 
+// Fonction pour comparer un record à nullRecord :
+int isNullRecord(IGCRecord record){
+    if(strcmp(record.time, NULLRecord.time) == 0 && record.latitude == NULLRecord.latitude && record.longitude == NULLRecord.longitude && record.altitudeBaro == NULLRecord.altitudeBaro && record.altitudeGPS == NULLRecord.altitudeGPS) return 1; else return 0;
+}
+
+int isNullDeltaRecord(IGCDeltaRecord record){
+    if(strcmp(record.time, NULLDeltaRecord.time) == 0 && record.duree == NULLDeltaRecord.duree && record.distH == NULLDeltaRecord.distH && record.distV == NULLDeltaRecord.distV && record.vitesseH == NULLDeltaRecord.vitesseH && record.vitesseV == NULLDeltaRecord.vitesseV) return 1; else return 0;
+}
 
 
 // procédure pour remplir le tableau des enregistrements
